@@ -2,12 +2,24 @@
 # vi: set ft=ruby :
 
 Vagrant.configure("2") do |config|
+
+  # vagrant plugin install vagrant-vbguest
+  config.vbguest.auto_update = false
+  config.vbguest.no_remote = true
+
+  # vagrant plugin install vagrant-hostmanager
+  config.hostmanager.enabled = true
+  config.hostmanager.manage_host = true
+  config.hostmanager.manage_guest = true
+  config.hostmanager.ignore_private_ip = false
+  config.hostmanager.include_offline = true
+
   config.vm.define "master" do |master|
     master.vm.box = "generic/centos7"
     master.vm.provider "virtualbox"
     master.vm.network "private_network", ip: "10.10.0.10"
-    master.vm.synced_folder "/home/iuxt/code/nutstore-system-deployment/configuration/puppet/modules", "/etc/puppetlabs/code/modules",create: true,owner: "root", group: "root",mount_options:["dmode=775","fmode=644"]
-    master.vm.synced_folder "/home/iuxt/code/nutstore-system-deployment/configuration/puppet/environments/production/manifests", "/etc/puppetlabs/code/environments/production/manifests",create: true,owner: "root", group: "root",mount_options:["dmode=775","fmode=644"]
+    master.vm.synced_folder "/home/iuxt/code/nutstore-system-deployment/configuration/puppet/modules", "/etc/puppetlabs/code/modules",create: true,owner: "root", group: "root", mount_options:["dmode=775","fmode=644"]
+    master.vm.synced_folder "/home/iuxt/code/nutstore-system-deployment/configuration/puppet/environments/production/manifests", "/etc/puppetlabs/code/environments/production/manifests",owner: "root", group: "root", mount_options:["dmode=775","fmode=644"]
     master.vm.hostname = "puppet-master"
     master.vm.provider "virtualbox" do |vb|
       vb.gui = false
@@ -17,6 +29,7 @@ Vagrant.configure("2") do |config|
     master.vm.provision "shell", inline: <<-SHELL
        sudo rpm -Uvh https://yum.puppet.com/puppet6-release-el-7.noarch.rpm
        yum install puppetserver -y
+       systemctl enable --now puppetserver
        echo "127.0.0.1 puppet" >> /etc/hosts
     SHELL
   end
@@ -34,6 +47,7 @@ Vagrant.configure("2") do |config|
     agent.vm.provision "shell", inline: <<-SHELL
        sudo rpm -Uvh https://yum.puppet.com/puppet6-release-el-7.noarch.rpm
        yum install puppet -y
+       systemctl stop puppet
        echo "10.0.0.10 puppet" >> /etc/hosts
     SHELL
   end
