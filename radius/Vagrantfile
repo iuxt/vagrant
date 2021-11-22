@@ -22,11 +22,12 @@ Vagrant.configure("2") do |config|
     end
     node.vm.provision "shell", inline: <<-SHELL
       yum install -y freeradius freeradius-utils freeradius-ldap
-      cp /vagrant/clients.conf /etc/raddb/clients.conf -f
-      cp /vagrant/users /etc/raddb/users -f
-      cp /vagrant/ldap /etc/raddb/mods-available -f
-      cp /vagrant/default /etc/raddb/sites-available -f
-      cp /vagrant/inner-tunnel /etc/raddb/inner-tunnel -f
+      /bin/cp /vagrant/clients.conf /etc/raddb/clients.conf -f
+      /bin/cp /vagrant/users /etc/raddb/users -f
+      /bin/cp /vagrant/ldap /etc/raddb/mods-available -f
+      ln -sf /etc/raddb/mods-available/ldap /etc/raddb/mods-enabled/ldap
+      /bin/cp /vagrant/default /etc/raddb/sites-available -f
+      /bin/cp /vagrant/inner-tunnel /etc/raddb/inner-tunnel -f
 
       systemctl restart radiusd
     SHELL
