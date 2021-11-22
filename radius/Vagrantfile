@@ -1,0 +1,34 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+
+  # vagrant plugin install vagrant-vbguest
+  config.vbguest.auto_update = false
+  config.vbguest.no_remote = true
+
+  config.vm.define "node" do |node|
+    node.vm.box = "generic/centos7"
+    node.vm.provider "virtualbox"
+    node.vm.network "private_network", ip: "10.10.0.13"
+    node.vm.network "forwarded_port", guest: 1812, host: 1812
+    node.vm.network "forwarded_port", guest: 1645, host: 1645
+    node.vm.synced_folder ".", "/vagrant"
+    node.vm.hostname = "radius"
+    node.vm.provider "virtualbox" do |vb|
+      vb.gui = false
+      vb.memory = "4096"
+      vb.cpus = "4"
+    end
+    node.vm.provision "shell", inline: <<-SHELL
+      yum install -y freeradius freeradius-utils freeradius-ldap
+      cp /vagrant/clients.conf /etc/raddb/clients.conf -f
+      cp /vagrant/users /etc/raddb/users -f
+      cp /vagrant/ldap /etc/raddb/mods-available -f
+      cp /vagrant/default /etc/raddb/sites-available -f
+      cp /vagrant/inner-tunnel /etc/raddb/inner-tunnel -f
+
+      systemctl restart radiusd
+    SHELL
+  end
+end
