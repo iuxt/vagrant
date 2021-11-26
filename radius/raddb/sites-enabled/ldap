@@ -1,0 +1,22 @@
+server site_ldap { 
+    listen { 
+         ipaddr = 0.0.0.0
+         port = 1833
+         type = auth
+    } 
+    authorize {
+         update {
+             control:Auth-Type := ldap
+         }
+    }
+    authenticate {
+        Auth-Type ldap {
+            ldap
+        }
+    }
+   
+    post-auth {
+        Post-Auth-Type Reject {
+        }
+    }
+}
