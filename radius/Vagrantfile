@@ -12,6 +12,7 @@ Vagrant.configure("2") do |config|
     node.vm.provider "virtualbox"
     node.vm.network "private_network", ip: "10.0.0.13", virtualbox__intnet: true
     node.vm.network "forwarded_port", guest: 1812, host: 1812
+    node.vm.network "forwarded_port", guest: 1833, host: 1833
     node.vm.network "forwarded_port", guest: 1645, host: 1645
     node.vm.synced_folder ".", "/vagrant"
     node.vm.hostname = "radius"
