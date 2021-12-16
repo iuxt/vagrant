@@ -1,0 +1,46 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+
+  # vagrant plugin install vagrant-vbguest
+  config.vbguest.auto_update = false
+  config.vbguest.no_remote = true
+
+  # vagrant plugin install vagrant-hostmanager
+  config.hostmanager.enabled = true
+  config.hostmanager.manage_host = true
+  config.hostmanager.manage_guest = true
+  config.hostmanager.ignore_private_ip = false
+  config.hostmanager.include_offline = true
+
+  config.vm.define "lvs0" do |node|
+    node.vm.box = "generic/centos8"
+    node.vm.provider "virtualbox"
+    node.vm.network "private_network", ip: "10.10.0.20", virtualbox__intnet: true
+    node.vm.hostname = "lvs0"
+    node.vm.provider "virtualbox" do |vb|
+      vb.gui = false
+      vb.memory = "2048"
+      vb.cpus = "2"
+    end
+    node.vm.provision "shell", inline: <<-SHELL
+	hostname
+    SHELL
+  end
+
+  config.vm.define "lvs1" do |node|
+    node.vm.box = "generic/centos8"
+    node.vm.provider "virtualbox"
+    node.vm.network "private_network", ip: "10.10.0.21", virtualbox__intnet: true
+    node.vm.hostname = "lvs1"
+    node.vm.provider "virtualbox" do |vb|
+      vb.gui = false
+      vb.memory = "2048"
+      vb.cpus = "2"
+    end
+    node.vm.provision "shell", inline: <<-SHELL
+	hostname
+    SHELL
+  end
+end
