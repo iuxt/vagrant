@@ -20,7 +20,7 @@ Vagrant.configure("2") do |config|
       vb.cpus = "1"
     end
     node.vm.provision "shell", inline: <<-SHELL
-        yum install openldap openldap-clients openldap-servers expect -y
+        yum install openldap openldap-clients openldap-servers -y
         cp /usr/share/openldap-servers/DB_CONFIG.example /var/lib/ldap/DB_CONFIG
         chown ldap. /var/lib/ldap/DB_CONFIG
         systemctl enable --now slapd
@@ -40,7 +40,8 @@ Vagrant.configure("2") do |config|
 
         # generate directory manager's password
         ldapmodify -Y EXTERNAL -H ldapi:/// -f chdomain.ldif
-        expect exec_basedomain.sh
+        ldapadd -x -D cn=Manager,dc=nutstore,dc=com -w com.012 -f basedomain.ldif
+        ldapadd -x -D cn=Manager,dc=nutstore,dc=com -w com.012 -f add_user.ldif
 
         systemctl stop firewalld
         systemctl disable firewalld
