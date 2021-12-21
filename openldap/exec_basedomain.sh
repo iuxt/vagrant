@@ -9,3 +9,5 @@ expect {
 "Enter LDAP Password:" {send "com.012\n";exp_continue}
 eof
 }
+
+## ldapmodify -x -D cn=Manager,dc=nutstore,dc=com -W -f change_passwd.ldif
