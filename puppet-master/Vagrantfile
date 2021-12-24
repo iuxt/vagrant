@@ -7,19 +7,19 @@ Vagrant.configure("2") do |config|
   config.vbguest.auto_update = false
   config.vbguest.no_remote = true
 
-  # vagrant plugin install vagrant-hostmanager
-  config.hostmanager.enabled = true
-  config.hostmanager.manage_host = true
-  config.hostmanager.manage_guest = true
-  config.hostmanager.ignore_private_ip = false
-  config.hostmanager.include_offline = true
+#   # vagrant plugin install vagrant-hostmanager
+#   config.hostmanager.enabled = true
+#   config.hostmanager.manage_host = false
+#   config.hostmanager.manage_guest = true
+#   config.hostmanager.ignore_private_ip = false
+#   config.hostmanager.include_offline = true
 
   config.vm.define "master" do |node|
     node.vm.box = "generic/centos7"
     node.vm.provider "virtualbox"
     node.vm.network "private_network", ip: "10.0.0.9", virtualbox__intnet: true
-    node.vm.synced_folder "Z:\\home\\iuxt\\code\\nutstore-system-deployment\\nutstore-system-deployment\\configuration\\puppet\\modules", "/etc/puppetlabs/code/modules",create: true,owner: "root", group: "root", mount_options:["dmode=775","fmode=644"]
-    node.vm.synced_folder "Z:\\home\\iuxt\\code\\nutstore-system-deployment\\configuration\\puppet\\environments\\production\\manifests", "/etc/puppetlabs/code/environments/production/manifests",owner: "root", group: "root", mount_options:["dmode=775","fmode=644"]
+    node.vm.synced_folder "\\\\wsl$\\Ubuntu\\home\\iuxt\\code\\nutstore-system-deployment\\configuration\\puppet\\modules", "/etc/puppetlabs/code/modules",create: true,owner: "root", group: "root", mount_options:["dmode=775","fmode=644"]
+    node.vm.synced_folder "\\\\wsl$\\Ubuntu\\home\\iuxt\\code\\nutstore-system-deployment\\configuration\\puppet\\environments\\production\\manifests", "/etc/puppetlabs/code/environments/production/manifests",owner: "root", group: "root", mount_options:["dmode=775","fmode=644"]
     # node.vm.synced_folder "/home/iuxt/code/nutstore-system-deployment/configuration/puppet/modules", "/etc/puppetlabs/code/modules",create: true,owner: "root", group: "root", mount_options:["dmode=775","fmode=644"]
     # node.vm.synced_folder "/home/iuxt/code/nutstore-system-deployment/configuration/puppet/environments/production/manifests", "/etc/puppetlabs/code/environments/production/manifests",owner: "root", group: "root", mount_options:["dmode=775","fmode=644"]
     node.vm.hostname = "puppet"
@@ -37,20 +37,20 @@ Vagrant.configure("2") do |config|
     SHELL
   end
 
-  config.vm.define "agent" do |node|
-    node.vm.box = "generic/centos8"
-    node.vm.provider "virtualbox"
-    node.vm.network "private_network", ip: "10.0.0.11", virtualbox__intnet: true
-    node.vm.hostname = "agent-centos8"
-    node.vm.provider "virtualbox" do |vb|
-      vb.gui = false
-      vb.memory = "2048"
-      vb.cpus = "2"
-    end
-    node.vm.provision "shell", inline: <<-SHELL
-       sudo rpm -Uvh https://yum.puppet.com/puppet6-release-el-8.noarch.rpm
-       yum install puppet-agent -y
-       systemctl stop puppet
-    SHELL
-  end
+#   config.vm.define "agent" do |node|
+#     node.vm.box = "generic/centos8"
+#     node.vm.provider "virtualbox"
+#     node.vm.network "private_network", ip: "10.0.0.11", virtualbox__intnet: true
+#     node.vm.hostname = "agent-centos8"
+#     node.vm.provider "virtualbox" do |vb|
+#       vb.gui = false
+#       vb.memory = "2048"
+#       vb.cpus = "2"
+#     end
+#     node.vm.provision "shell", inline: <<-SHELL
+#        sudo rpm -Uvh https://yum.puppet.com/puppet6-release-el-8.noarch.rpm
+#        yum install puppet-agent -y
+#        systemctl stop puppet
+#     SHELL
+#   end
 end
