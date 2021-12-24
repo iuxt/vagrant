@@ -17,7 +17,7 @@ Vagrant.configure("2") do |config|
   config.vm.define "agent" do |agent|
     agent.vm.box = "centos/stream8"
     agent.vm.provider "virtualbox"
-    agent.vm.network "private_network", ip: "10.10.0.12", virtualbox__intnet: true
+    agent.vm.network "private_network", ip: "10.0.0.12", virtualbox__intnet: true
     agent.vm.hostname = "agent-stream"
     agent.vm.provider "virtualbox" do |vb|
       vb.gui = false
@@ -26,9 +26,9 @@ Vagrant.configure("2") do |config|
     end
     agent.vm.provision "shell", inline: <<-SHELL
        sudo rpm -Uvh https://yum.puppet.com/puppet6-release-el-8.noarch.rpm
-       yum install puppet -y
+       yum install puppet-agent -y
        systemctl stop puppet
-       if [ `grep puppet /etc/hosts | wc -l` -eq 0 ]; then echo "10.10.0.10 puppet" >> /etc/hosts ;fi
+       if [ `grep -c "10.0.0.9 puppet" /etc/hosts` -eq 0 ]; then echo "10.0.0.9 puppet" >> /etc/hosts ;fi
        
     SHELL
   end
